@@ -1,0 +1,193 @@
+topic: ~public_holidays_chatbot()
+# Defining extra concepts out of words or group of words
+concept:(hello) [hello hi hey "good morning" greetings]
+concept: (reaction) ^rand["okay!" "alright!" "fine!" "as you wish!" "okay then!" "very well!"]
+concept:(countries) [
+    Andorra
+    Albania
+    Argentina
+    Austria
+    Australia
+    Åland Islands
+    Barbados
+    Belgium
+    Bulgaria
+    Benin
+    Bolivia
+    Brazil
+    Bahamas
+    Botswana
+    Belarus
+    Belize
+    Canada
+    Switzerland
+    Chile
+    China
+    Colombia
+    "Costa Rica"
+    Cuba
+    Cyprus
+    Czechia
+    Germany
+    Denmark
+    "Dominican Republic"
+    Ecuador
+    Estonia
+    Egypt
+    Spain
+    Finland
+    "Faroe Islands"
+    France
+    Gabon
+    "United Kingdom"
+    Grenada
+    Greenland
+    Gambia
+    Greece
+    Guatemala
+    Guyana
+    Honduras
+    Croatia
+    Haiti
+    Hungary
+    Indonesia
+    Ireland
+    "Isle of Man"
+    Iceland
+    Italy
+    Jersey
+    Jamaica
+    Japan
+    Liechtenstein
+    Lesotho
+    Lithuania
+    Luxembourg
+    Latvia
+    Morocco
+    Monaco
+    Moldova
+    Macedonia
+    Madagascar
+    Mongolia
+    Malta
+    Mexico
+    Mozambique
+    Namibia
+    Niger
+    Nicaragua
+    Netherlands
+    Norway
+    "New Zealand"
+    Panama
+    Peru
+    Poland
+    Puerto Rico
+    Portugal
+    Paraguay
+    Romania
+    Serbia
+    Russia
+    Sweden
+    Slovenia
+    "Svalbard and Jan Mayen"
+    Slovakia
+    "San Marino"
+    Suriname
+    "El Salvador"
+    Tunisia
+    Turkey
+    Ukraine
+    "United States"
+    Uruguay
+    "Vatican City"
+    Venezuela
+    Vietnam
+    "South Africa"
+]
+
+# Replying to speech
+
+u:(~hello) $show="Hello!" ~hello
+
+u:(["what day is [it today]" "today date"] ) $show=$today $date=$today ^execute(rawDateToDate) Today is the ^sayDate($year,$month,$day)
+
+u:(what can you do)%BEGIN $show="Worldwide Public Holiday Calendar" $today=^currentDate
+I can tell you the holidays of countries all around the world ! Do you need an information ?
+    u1:(yes)
+    ~reaction for which country would you like to know the next holiday ?
+        u2:(_~countries)
+        $country=$1
+        ^enableThenGoto(NEXT_HOLIDAY)
+    u1:(no)
+    ok
+
+u:({["when is" "tell me" "what is" "what's"]  the} next holiday in _~countries)
+$country=$1
+^enableThenGoto(NEXT_HOLIDAY)
+
+u:(is today a holiday in _~countries)
+$country=$1
+^execute(todayHoliday,$country,$today)
+$show = $todayHoliday
+$todayHoliday
+
+proposal: %NEXT_HOLIDAY
+$show="Next Holiday in $country ..."
+Let's see...
+^execute(findNextHoliday,$country)
+^execute(rawDateToDate)
+$show="Next Holiday in $country: $name on $date"  The next holiday in $country is the $name on the ^sayDate($year,$month,$day)
+
+
+def:sayDate($year, $month, $day)
+[
+"$day==01 first"
+"$day==02 second"
+"$day==03 third"
+"$day==04 fourth"
+"$day==05 fifth"
+"$day==06 sixth"
+"$day==07 seventh"
+"$day==08 eighth"
+"$day==09 ninth"
+"$day==10 tenth"
+"$day==11 eleventh"
+"$day==12 twelfth"
+"$day==13 thirteenth"
+"$day==14 fourteenth"
+"$day==15 fifteenth"
+"$day==16 sixteenth"
+"$day==17 seventeenth"
+"$day==18 eighteenth"
+"$day==19 nineteenth"
+"$day==20 twentieth"
+"$day==21 twenty-first"
+"$day==22 twenty-second"
+"$day==23 twenty-third"
+"$day==24 twenty-fourth"
+"$day==25 twenty-fifth"
+"$day==26 twenty-sixth"
+"$day==27 twenty-seventh"
+"$day==28 twenty-eighth"
+"$day==29 twenty-ninth"
+"$day==30 thirtieth"
+"$day==31 thirty-first"
+]
+of
+[
+"$month==01 january"
+"$month==02 february"
+"$month==03 march"
+"$month==04 april"
+"$month==05 may"
+"$month==06 june"
+"$month==07 july"
+"$month==08 august"
+"$month==09 september"
+"$month==10 october"
+"$month==11 november"
+"$month==12 december"
+ ]
+
+$year
+
